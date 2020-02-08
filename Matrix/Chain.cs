@@ -16,28 +16,26 @@ namespace Matrix
         public static void Draw(object x)
         {
             int Length = Random.Next(5, 10);
-            int Y = Random.Next(0, Console.WindowHeight - 2);
+            int Y = 0;
             int X = (int)x;
-            int currentY = 0, chainCount = 0;
-            
+            int currentY = 0;
 
+           
             for (int i = 0; i < Length; i++)
             {
-                lock (locker)
-                {
-                    SetPosition(X, ref Y, ref currentY);
-                    SetColor(ref chainCount);
-
-                    if(chainCount == Length)
+                    lock (locker)
                     {
-                        chainCount = 0;
-                    }
+                        SetPosition(X, ref Y, ref currentY);
 
-                    CutChain(Y, X, ref i, Length);
-                    Thread.Sleep(0);
+                        SetColor(X, currentY, i, Length);
+
+                        CutChain(Y, X, ref i, Length);
+                    }
+                if (currentY == 10)
+                {
+                    new Thread(new ParameterizedThreadStart(Chain.Draw)).Start(x);
                 }
             }
-           
         }
 
 
@@ -77,30 +75,23 @@ namespace Matrix
             return symbols[index];
         }
 
-        private static void SetColor(ref int chainCount)
+        private static void SetColor(int X, int currentY, int i, int Length)
         {
-                if (chainCount == 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(GetRandomChar());
-                    chainCount++;
-                }
-                else
-                {
-                    if (chainCount == 1)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine(GetRandomChar());
-                        chainCount++;
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(GetRandomChar());
-                        chainCount++;
-                    }
-                }
-            
+           
+           Console.ForegroundColor = ConsoleColor.White;
+           Console.WriteLine(GetRandomChar());
+
+            if (currentY > 2 && i>=2)
+            {
+              
+                Console.SetCursorPosition(X, currentY - 2);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(GetRandomChar());
+
+                Console.SetCursorPosition(X, currentY - 3);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine(GetRandomChar());
+            }
 
         }
     }
